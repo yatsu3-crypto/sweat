@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>汗かゆ食品ガイド｜やまもと皮膚科・漢方クリニック</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f5f1e8;
+    --bg-2: #ebe4d3;
+    --paper: #fbf8f0;
+    --ink: #2d2a24;
+    --ink-soft: #5a544a;
+    --ink-mute: #8b8478;
+    --line: #d9d0bc;
+    --accent: #4a6741;
+    --accent-soft: #7a9070;
+    --safe: #5b8a72;
+    --caution: #c89b3c;
+    --warn: #b85450;
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 8px 24px rgba(45,42,36,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Zen Kaku Gothic New',-apple-system,sans-serif;
+    background:var(--bg);
+    background-image:
+      radial-gradient(1200px 600px at 90% -10%, rgba(122,144,112,.12), transparent 60%),
+      radial-gradient(800px 500px at -10% 110%, rgba(200,155,60,.10), transparent 60%);
+    color:var(--ink);
+    min-height:100vh;
+    line-height:1.7;
+    font-feature-settings:"palt";
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ヘッダー */
+  .topbar{position:sticky;top:0;z-index:10;background:rgba(245,241,232,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-inner{max-width:680px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:12px;}
+  .topbar-mark{width:34px;height:34px;flex:0 0 auto;border:1px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Shippori Mincho',serif;color:var(--accent);font-weight:600;font-size:16px;}
+  .topbar-title{font-family:'Shippori Mincho',serif;font-size:15px;font-weight:600;letter-spacing:.04em;}
+  .topbar-sub{font-size:11px;color:var(--ink-mute);letter-spacing:.06em;}
+
+  main{max-width:680px;margin:0 auto;padding:20px 20px 100px;}
+
+  /* タブ */
+  .tabs{display:flex;gap:0;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:18px;}
+  .tab{flex:1;border:none;background:none;padding:10px 8px;font-family:inherit;font-size:13px;color:var(--ink-mute);border-radius:10px;cursor:pointer;transition:all .2s;letter-spacing:.05em;}
+  .tab.active{background:var(--accent);color:#fff;font-weight:600;}
+
+  .panel{display:none;}
+  .panel.active{display:block;animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  /* 検索カード */
+  .search-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);}
+  .search-label{font-size:12px;color:var(--ink-mute);letter-spacing:.15em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .search-label::before{content:"";display:inline-block;width:14px;height:1px;background:var(--accent);}
+  .search-row{display:flex;gap:8px;}
+  .search-input{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px 16px;font-size:16px;font-family:inherit;color:var(--ink);outline:none;transition:border-color .2s;}
+  .search-input:focus{border-color:var(--accent);}
+  .search-btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:0 20px;font-size:14px;font-weight:600;font-family:inherit;letter-spacing:.05em;cursor:pointer;transition:all .15s;min-width:80px;}
+  .search-btn:active{transform:scale(.97);}
+
+  /* クイック例 */
+  .quick-list{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;}
+  .quick-list small{font-size:11px;color:var(--ink-mute);margin-right:4px;align-self:center;}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .chip:active{background:var(--bg-2);}
+
+  /* 結果 */
+  .result-area{margin-top:18px;}
+  .result-card{background:var(--paper);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);animation:slideUp .3s ease;}
+  @keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .verdict{padding:24px 22px 20px;color:#fff;position:relative;overflow:hidden;}
+  .verdict::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 30%, rgba(255,255,255,.18), transparent 50%),radial-gradient(circle at 10% 90%, rgba(0,0,0,.10), transparent 50%);pointer-events:none;}
+  .verdict.safe{background:linear-gradient(135deg, #5b8a72, #4a6741);}
+  .verdict.caution{background:linear-gradient(135deg, #d4a64a, #b8862a);}
+  .verdict.warn{background:linear-gradient(135deg, #c46862, #9d3f3b);}
+  .verdict-food{font-family:'Shippori Mincho',serif;font-size:22px;font-weight:600;margin:0 0 4px;position:relative;}
+  .verdict-summary{position:relative;opacity:.95;font-size:13px;}
+  .verdict-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:500;letter-spacing:.08em;margin-top:10px;position:relative;}
+  .verdict-tag::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;}
+  .verdict-body{padding:22px;}
+  .verdict-body h3{font-family:'Shippori Mincho',serif;font-size:14px;font-weight:600;margin:0 0 8px;color:var(--accent);letter-spacing:.1em;display:flex;align-items:center;gap:8px;}
+  .verdict-body h3::before{content:"";width:4px;height:14px;background:var(--accent);}
+  .verdict-body h3:not(:first-child){margin-top:18px;}
+  .verdict-body ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink-soft);}
+  .verdict-body ul li{margin-bottom:4px;}
+  .verdict-body ul li::marker{color:var(--accent);}
+
+  /* 未収載の表示 */
+  .not-found{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);}
+  .not-found h3{font-family:'Shippori Mincho',serif;color:var(--accent);font-size:16px;margin:0 0 12px;}
+  .not-found .basic-rules{margin-top:14px;}
+  .basic-rule{display:flex;gap:12px;padding:12px 0;border-top:1px dashed var(--line);font-size:13px;}
+  .basic-rule:first-of-type{border-top:none;}
+  .basic-rule .rule-dot{width:14px;height:14px;border-radius:50%;flex:0 0 auto;margin-top:4px;}
+  .basic-rule .rule-dot.safe{background:var(--safe);}
+  .basic-rule .rule-dot.caution{background:var(--caution);}
+  .basic-rule .rule-dot.warn{background:var(--warn);}
+  .basic-rule .rule-text strong{display:block;margin-bottom:2px;}
+  .basic-rule .rule-text small{color:var(--ink-mute);font-size:12px;}
+  .not-found-tip{margin-top:18px;padding:12px 14px;background:#f4ede0;border-left:3px solid var(--accent);font-size:12px;color:var(--ink-soft);border-radius:6px;}
+
+  /* カテゴリタイル */
+  .category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .cat-tile{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;}
+  .cat-tile:active{transform:scale(.98);background:var(--bg-2);}
+  .cat-tile-icon{font-family:'Shippori Mincho',serif;font-size:22px;color:var(--accent);margin-bottom:4px;}
+  .cat-tile-name{font-size:14px;font-weight:600;}
+  .cat-tile-count{font-size:11px;color:var(--ink-mute);margin-top:2px;}
+
+  /* 食品リスト */
+  .food-list{display:flex;flex-direction:column;gap:6px;}
+  .food-item{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;font-family:inherit;text-align:left;border-left:none;width:100%;}
+  .food-item:active{transform:scale(.99);}
+  .food-item.safe{border-left:4px solid var(--safe);}
+  .food-item.caution{border-left:4px solid var(--caution);}
+  .food-item.warn{border-left:4px solid var(--warn);}
+  .food-item .name{flex:1;font-size:14px;font-weight:500;}
+  .food-item .v-mini{font-size:11px;color:var(--ink-mute);letter-spacing:.05em;}
+
+  /* 戻る */
+  .back-btn{border:none;background:none;color:var(--accent);font-family:inherit;font-size:13px;padding:0;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;gap:4px;}
+
+  /* セクションタイトル */
+  .section-title{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--accent);letter-spacing:.15em;margin:0 0 12px;display:flex;align-items:center;gap:10px;}
+  .section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  /* 印刷ボタン */
+  .print-action{margin-top:18px;text-align:center;}
+  .print-btn{background:var(--paper);color:var(--accent);border:1px solid var(--accent);border-radius:12px;padding:12px 24px;font-family:inherit;font-size:13px;letter-spacing:.1em;cursor:pointer;font-weight:600;}
+  .print-btn:active{background:var(--bg-2);}
+
+  /* 印刷ビュー */
+  .print-view{display:none;}
+  .print-header{text-align:center;margin-bottom:20px;}
+  .print-header h1{font-family:'Shippori Mincho',serif;font-size:20px;margin:0 0 4px;}
+  .print-header p{font-size:11px;color:var(--ink-mute);margin:0;}
+  .print-section{margin-bottom:18px;break-inside:avoid;}
+  .print-section h2{font-family:'Shippori Mincho',serif;font-size:14px;padding:6px 10px;color:#fff;margin:0 0 8px;border-radius:4px;}
+  .print-section h2.safe{background:var(--safe);}
+  .print-section h2.caution{background:var(--caution);}
+  .print-section h2.warn{background:var(--warn);}
+  .print-foods{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 10px;font-size:11px;}
+  .print-foods div{padding:2px 0;}
+  .print-clinic{text-align:right;margin-top:24px;font-size:10px;color:var(--ink-mute);font-family:'Shippori Mincho',serif;}
+
+  .footer-note{margin-top:36px;text-align:center;font-size:11px;color:var(--ink-mute);line-height:1.8;padding:0 16px;}
+  .footer-note .clinic{font-family:'Shippori Mincho',serif;color:var(--accent);font-size:12px;letter-spacing:.1em;display:block;margin-top:6px;}
+
+  /* 印刷時 */
+  @media print{
+    body{background:#fff;}
+    .topbar,.tabs,.footer-note,.panel:not(#panel-print),.print-action{display:none !important;}
+    .print-view{display:block !important;}
+    main{padding:0 12px;max-width:none;}
+    @page{size:A4;margin:12mm;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-mark">汗</div>
+    <div>
+      <div class="topbar-title">汗かゆ食品ガイド</div>
+      <div class="topbar-sub">コリン性蕁麻疹・汗アレルギー</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <div class="tabs">
+    <button class="tab active" data-panel="search">検索</button>
+    <button class="tab" data-panel="browse">分類で見る</button>
+    <button class="tab" data-panel="oklist">OK食品</button>
+    <button class="tab" data-panel="print">印刷</button>
+  </div>
+
+  <!-- 検索パネル -->
+  <section class="panel active" id="panel-search">
+    <div class="search-card">
+      <div class="search-label">食品名を入力</div>
+      <div class="search-row">
+        <input type="text" class="search-input" id="foodInput" placeholder="例：キムチ、コーヒー、サバ…" autocomplete="off">
+        <button class="search-btn" id="checkBtn">検索</button>
+      </div>
+      <div class="quick-list">
+        <small>例：</small>
+        <button class="chip" data-food="麻婆豆腐">麻婆豆腐</button>
+        <button class="chip" data-food="ビール">ビール</button>
+        <button class="chip" data-food="チョコレート">チョコレート</button>
+        <button class="chip" data-food="鶏むね肉">鶏むね肉</button>
+        <button class="chip" data-food="冷奴">冷奴</button>
+      </div>
+    </div>
+    <div class="result-area" id="resultArea"></div>
+  </section>
+
+  <!-- カテゴリパネル -->
+  <section class="panel" id="panel-browse">
+    <div id="catList"></div>
+  </section>
+
+  <!-- OK食品パネル -->
+  <section class="panel" id="panel-oklist">
+    <div class="section-title">食 べ て O K の 食 品</div>
+    <div class="food-list" id="okList"></div>
+  </section>
+
+  <!-- 印刷パネル -->
+  <section class="panel" id="panel-print">
+    <div class="section-title">患 者 配 布 用 印 刷</div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 14px;">A4一覧表として印刷できます。診察時の説明資料や、ご家庭での参考にお使いください。</p>
+    <div class="print-action">
+      <button class="print-btn" onclick="window.print()">印刷プレビューを開く</button>
+    </div>
+
+    <div class="print-view" id="printView"></div>
+  </section>
+
+  <p class="footer-note">
+    本ガイドは患者さんのセルフケア補助を目的としたものです。<br>
+    症状の重さや治療内容に応じた判断は主治医にご相談ください。
+    <span class="clinic">やまもと皮膚科・漢方クリニック</span>
+  </p>
+
+</main>
+
+<script>
+/* ============================
+   食品データベース（たたき台）
+   ============================ */
+const CATEGORIES = [
+  {id:'spicy',   name:'辛いもの・香辛料',     desc:'激辛・スパイス類'},
+  {id:'alcohol', name:'お酒',                 desc:'血管拡張・ヒスタミン'},
+  {id:'caffeine',name:'カフェイン・嗜好飲料', desc:'コーヒー・茶など'},
+  {id:'sweets',  name:'お菓子・甘いもの',     desc:'糖質・脂質'},
+  {id:'fish',    name:'魚介類',               desc:'青魚・鮮度の影響'},
+  {id:'meat',    name:'肉類',                 desc:'部位による違い'},
+  {id:'vegetable',name:'野菜・果物',          desc:'ヒスタミン含有に注意'},
+  {id:'fermented',name:'発酵食品・チーズ',    desc:'熟成度に注意'},
+  {id:'staple',  name:'主食・麺類',           desc:'ご飯・パン・麺'},
+  {id:'soy',     name:'豆・豆製品',           desc:'豆腐・納豆など'},
+  {id:'drink',   name:'飲み物（その他）',     desc:'温度に注意'},
+  {id:'soup',    name:'汁物・鍋',             desc:'熱・辛味に注意'},
+];
+
+const FOODS = [
+  // 辛いもの・香辛料 ──────
+  {n:'キムチ',          c:'spicy', v:'warn',    s:'辛味と発酵で発汗を強く促します',
+    r:['唐辛子のカプサイシンが急な発汗を誘発','発酵食品でヒスタミンも多め'],
+    t:['症状が落ち着いている時に少量から','他の刺激物と重ねない']},
+  {n:'麻婆豆腐',        c:'spicy', v:'warn',    s:'熱・辛味の二重刺激で要注意',
+    r:['熱さと辛味の組み合わせは強い発汗刺激','花椒のしびれも刺激に'],
+    t:['辛さ控えめのレシピで自作を','少し冷ましてから']},
+  {n:'カレーライス',     c:'spicy', v:'caution', s:'辛さの調整次第',
+    r:['スパイスの種類と量で刺激度が変わる'],
+    t:['甘口を選ぶ','汗をかいたらすぐ拭き取る']},
+  {n:'タバスコ',        c:'spicy', v:'warn',    s:'濃縮された刺激物',
+    r:['カプサイシン濃度が高い'],
+    t:['できるだけ避けて']},
+  {n:'七味唐辛子',      c:'spicy', v:'caution', s:'少量なら可',
+    r:['量次第で発汗刺激になる'],
+    t:['ふりかける程度に']},
+  {n:'わさび',          c:'spicy', v:'caution', s:'少量なら問題なし',
+    r:['揮発性の刺激だが持続は短め'],
+    t:['つけすぎないように']},
+  {n:'生姜',            c:'spicy', v:'caution', s:'温め作用あり',
+    r:['身体を温める働きで発汗を促すことも'],
+    t:['調味料程度の使用は問題なし']},
+  {n:'激辛ラーメン',     c:'spicy', v:'warn',    s:'熱+辛味+塩分で要注意',
+    r:['複数の発汗刺激が重なる代表例'],
+    t:['症状が強い時期は避ける']},
+
+  // お酒 ──────
+  {n:'ビール',          c:'alcohol', v:'warn',    s:'血管拡張+ヒスタミン',
+    r:['アルコールが血管を拡張','麦芽のヒスタミンも関与'],
+    t:['ノンアルコールビールに置き換え']},
+  {n:'赤ワイン',         c:'alcohol', v:'warn',    s:'ヒスタミン特に多い',
+    r:['赤ワインは熟成過程でヒスタミン増加','亜硫酸塩も影響'],
+    t:['白ワインの方がまだ刺激は少ない']},
+  {n:'白ワイン',         c:'alcohol', v:'caution', s:'赤よりは穏やか',
+    r:['アルコール自体は血管拡張作用'],
+    t:['少量・冷やして']},
+  {n:'日本酒',           c:'alcohol', v:'caution', s:'温度と量に注意',
+    r:['熱燗は急激な体温上昇を招く'],
+    t:['冷やか常温で少量に']},
+  {n:'焼酎',             c:'alcohol', v:'caution', s:'割り方を工夫',
+    r:['アルコール濃度が高め'],
+    t:['水割り・お茶割りで薄めて']},
+  {n:'ハイボール',       c:'alcohol', v:'caution', s:'量を控えめに',
+    r:['アルコールの血管拡張作用'],
+    t:['1杯までを目安に']},
+  {n:'ノンアルコールビール', c:'alcohol', v:'safe', s:'代替として推奨',
+    r:['アルコールによる発汗刺激なし'],
+    t:['食事の楽しみを保ちつつ症状予防に']},
+
+  // カフェイン ──────
+  {n:'コーヒー',         c:'caffeine', v:'caution', s:'量と温度に注意',
+    r:['カフェインが交感神経を刺激','熱いと体温上昇も'],
+    t:['1日2杯まで・アイスや常温で']},
+  {n:'アイスコーヒー',   c:'caffeine', v:'caution', s:'温度面では◎',
+    r:['カフェインの刺激は変わらず'],
+    t:['1日2杯以内に']},
+  {n:'デカフェコーヒー', c:'caffeine', v:'safe',    s:'安心して飲める',
+    r:['カフェインによる発汗刺激なし'],
+    t:['コーヒー好きの方の代替に']},
+  {n:'紅茶',             c:'caffeine', v:'caution', s:'コーヒーより穏やか',
+    r:['カフェイン量はコーヒーの半分程度'],
+    t:['ミルクティーで薄めるのも◎']},
+  {n:'緑茶',             c:'caffeine', v:'caution', s:'薄めなら問題なし',
+    r:['カフェインを含むが量は控えめ'],
+    t:['濃いめの玉露は避けて']},
+  {n:'ほうじ茶',         c:'caffeine', v:'safe',    s:'カフェイン少なめ',
+    r:['焙煎でカフェインが減少'],
+    t:['日常使いに最適']},
+  {n:'麦茶',             c:'caffeine', v:'safe',    s:'最も安心',
+    r:['ノンカフェイン','水分補給に最適'],
+    t:['夏場の常備飲料として']},
+  {n:'ルイボスティー',   c:'caffeine', v:'safe',    s:'抗酸化作用も',
+    r:['ノンカフェイン'],
+    t:['食事と一緒に']},
+  {n:'エナジードリンク', c:'caffeine', v:'warn',    s:'高濃度カフェインで要注意',
+    r:['カフェイン量が多く発汗刺激が強い','糖質・脂質も多い'],
+    t:['できるだけ避けて']},
+  {n:'ココア',           c:'caffeine', v:'caution', s:'カカオ量に注意',
+    r:['カカオにはカフェイン類似成分','糖質と脂質も'],
+    t:['ホットなら冷ましてから']},
+
+  // お菓子・甘いもの ──────
+  {n:'チョコレート',     c:'sweets', v:'warn',    s:'糖質+脂質+カフェイン類',
+    r:['脂質と糖質で皮脂が増えやすい','カカオの刺激成分も'],
+    t:['ハイカカオ少量に','カカオ70%以上で量を絞る']},
+  {n:'ケーキ',           c:'sweets', v:'warn',    s:'糖質と脂質の塊',
+    r:['皮脂分泌が増え汗アレルゲンが増加','クリームの脂質が多い'],
+    t:['特別な日の少量に','フルーツ系を選ぶ']},
+  {n:'ポテトチップス',   c:'sweets', v:'warn',    s:'脂質+塩分',
+    r:['揚げ物の脂質が皮脂を増やす','塩分で喉が渇き発汗増加'],
+    t:['焼きタイプ・少量パックを選ぶ']},
+  {n:'クッキー',         c:'sweets', v:'caution', s:'量を絞れば可',
+    r:['糖質と脂質を含む'],
+    t:['1〜2枚までを目安に']},
+  {n:'アイスクリーム',   c:'sweets', v:'caution', s:'冷たさより成分に注意',
+    r:['脂質と糖質が多い','乳製品由来のヒスタミンも少量'],
+    t:['シャーベット系の方が無難']},
+  {n:'シャーベット',     c:'sweets', v:'safe',    s:'比較的安心',
+    r:['脂質が少なく皮脂への影響軽微'],
+    t:['量は控えめに']},
+  {n:'和菓子(あんこ)',   c:'sweets', v:'safe',    s:'洋菓子より穏やか',
+    r:['脂質が少ない','小豆は穏やかな食材'],
+    t:['お菓子を食べたい時の選択肢に']},
+  {n:'寒天ゼリー',       c:'sweets', v:'safe',    s:'糖質も控えめ',
+    r:['脂質ほぼなし','カロリー低め'],
+    t:['手作りなら糖分調整も◎']},
+  {n:'ドーナツ',         c:'sweets', v:'warn',    s:'揚げ菓子の代表',
+    r:['揚げ油の脂質が多い','糖質も高い'],
+    t:['焼きドーナツに置き換え']},
+  {n:'スナック菓子',     c:'sweets', v:'warn',    s:'皮脂を増やしやすい',
+    r:['脂質と添加物','塩分も多い'],
+    t:['症状の出やすい時期は避ける']},
+
+  // 魚介類 ──────
+  {n:'サバ',             c:'fish', v:'caution', s:'鮮度が命',
+    r:['青魚はヒスタミン蓄積しやすい','新鮮なら問題は少ない'],
+    t:['購入当日に調理','冷蔵保存を徹底']},
+  {n:'マグロ',           c:'fish', v:'caution', s:'特に赤身は注意',
+    r:['赤身にヒスタミンが蓄積しやすい'],
+    t:['新鮮な刺身を少量で']},
+  {n:'カツオ',           c:'fish', v:'caution', s:'青魚と同様',
+    r:['ヒスチジンを多く含み変質しやすい'],
+    t:['鮮度の良いものを選ぶ']},
+  {n:'イワシ',           c:'fish', v:'caution', s:'鮮度に注意',
+    r:['青魚のひとつ'],
+    t:['当日購入・冷蔵厳守']},
+  {n:'サンマ',           c:'fish', v:'caution', s:'青魚共通の注意',
+    r:['ヒスチジンを含む'],
+    t:['新鮮なものを焼いてすぐに']},
+  {n:'タラ',             c:'fish', v:'safe',    s:'白身魚で安心',
+    r:['ヒスタミンの蓄積が少ない','低脂質高たんぱく'],
+    t:['日常の魚として活用']},
+  {n:'カレイ',           c:'fish', v:'safe',    s:'白身魚',
+    r:['脂質も少なく穏やか'],
+    t:['煮付け・焼き魚に']},
+  {n:'タイ',             c:'fish', v:'safe',    s:'白身魚の代表',
+    r:['ヒスタミン少なく良質なたんぱく源'],
+    t:['刺身でも焼きでも']},
+  {n:'鮭',               c:'fish', v:'safe',    s:'白身寄り',
+    r:['青魚に比べヒスタミン蓄積少ない'],
+    t:['塩分控えめのものを']},
+  {n:'エビ',             c:'fish', v:'caution', s:'個人差あり',
+    r:['甲殻類でアレルギー反応しやすい人も'],
+    t:['調理直後に・少量から']},
+  {n:'カニ',             c:'fish', v:'caution', s:'エビと同様',
+    r:['甲殻類アレルギーの可能性'],
+    t:['新鮮なものを少量']},
+  {n:'イカ',             c:'fish', v:'safe',    s:'白身寄り',
+    r:['ヒスタミン蓄積少なめ'],
+    t:['加熱調理が安心']},
+  {n:'ツナ缶',           c:'fish', v:'caution', s:'マグロ加工品',
+    r:['原料がマグロのため注意'],
+    t:['少量・他の青魚と重ねない']},
+
+  // 肉類 ──────
+  {n:'鶏むね肉',         c:'meat', v:'safe',    s:'低脂質の優等生',
+    r:['脂質が少なく皮脂への影響少ない','良質なたんぱく源'],
+    t:['毎日の主菜として活用']},
+  {n:'鶏ささみ',         c:'meat', v:'safe',    s:'最も穏やかな肉',
+    r:['脂質ほぼなし','刺激の少ない食材'],
+    t:['症状が強い時期の主菜に最適']},
+  {n:'鶏もも肉',         c:'meat', v:'safe',    s:'皮を外せば◎',
+    r:['皮を外すと脂質が大幅減'],
+    t:['皮を外して調理']},
+  {n:'豚肉(赤身)',       c:'meat', v:'safe',    s:'赤身なら問題なし',
+    r:['ヒレ・もも赤身は脂質少なめ'],
+    t:['赤身部位を選ぶ']},
+  {n:'豚バラ肉',         c:'meat', v:'caution', s:'脂質が多め',
+    r:['脂質が皮脂を増やす可能性'],
+    t:['量を控えめに','茹でて脂を落とす']},
+  {n:'牛赤身肉',         c:'meat', v:'safe',    s:'赤身ステーキは可',
+    r:['脂質コントロールできる'],
+    t:['ヒレ・ももを選ぶ']},
+  {n:'牛霜降り',         c:'meat', v:'caution', s:'脂質が多い',
+    r:['脂質摂取が皮脂分泌につながる'],
+    t:['特別な時の少量に']},
+  {n:'ベーコン',         c:'meat', v:'warn',    s:'加工肉+脂質',
+    r:['熟成・塩漬肉でヒスタミン多い','脂質も多い'],
+    t:['頻繁な摂取は避ける']},
+  {n:'ハム',             c:'meat', v:'caution', s:'加工肉に注意',
+    r:['熟成過程でヒスタミンが増える'],
+    t:['少量・たまに楽しむ程度に']},
+  {n:'サラミ',           c:'meat', v:'warn',    s:'熟成肉の代表',
+    r:['熟成肉でヒスタミン量が多い'],
+    t:['症状が強い時期は避ける']},
+  {n:'ソーセージ',       c:'meat', v:'caution', s:'種類による',
+    r:['一部にヒスタミン','添加物の影響も'],
+    t:['加工度の低いものを少量']},
+
+  // 野菜・果物 ──────
+  {n:'キャベツ',         c:'vegetable', v:'safe', s:'刺激の少ない野菜',
+    r:['ヒスタミン少なく日常使いに最適'],
+    t:['たっぷり食べてOK']},
+  {n:'レタス',           c:'vegetable', v:'safe', s:'安心の葉物',
+    r:['刺激成分なし'],
+    t:['サラダの主役に']},
+  {n:'にんじん',         c:'vegetable', v:'safe', s:'根菜の代表',
+    r:['ヒスタミンほぼなし'],
+    t:['加熱でも生でも']},
+  {n:'大根',             c:'vegetable', v:'safe', s:'消化にもよい',
+    r:['穏やかな食材'],
+    t:['煮物・サラダに']},
+  {n:'ほうれん草',       c:'vegetable', v:'caution', s:'ヒスタミンやや多め',
+    r:['仮性アレルゲンの一種を含む'],
+    t:['茹でこぼして使う・量を控えめに']},
+  {n:'トマト',           c:'vegetable', v:'caution', s:'ヒスタミン含有',
+    r:['仮性アレルゲンを含む'],
+    t:['症状の強い時期は控えめに']},
+  {n:'ナス',             c:'vegetable', v:'caution', s:'ヒスタミン含有',
+    r:['仮性アレルゲンの一種'],
+    t:['症状の強い時期は減らす']},
+  {n:'タケノコ',         c:'vegetable', v:'caution', s:'ヒスタミン含有',
+    r:['仮性アレルゲン食品'],
+    t:['量を控えめに']},
+  {n:'バナナ',           c:'vegetable', v:'caution', s:'ヒスタミン含有',
+    r:['仮性アレルゲン食品のひとつ'],
+    t:['1日1本程度なら']},
+  {n:'りんご',           c:'vegetable', v:'safe', s:'安心の果物',
+    r:['刺激の少ない果物'],
+    t:['毎日でもOK']},
+  {n:'みかん',           c:'vegetable', v:'safe', s:'柑橘類で◎',
+    r:['ビタミンCも豊富'],
+    t:['冬の定番として']},
+  {n:'いちご',           c:'vegetable', v:'caution', s:'仮性アレルゲン',
+    r:['少量のヒスタミン放出物質'],
+    t:['食べ過ぎに注意']},
+  {n:'パイナップル',     c:'vegetable', v:'caution', s:'仮性アレルゲン',
+    r:['ヒスタミン放出を促す可能性'],
+    t:['量を控えめに']},
+  {n:'ブロッコリー',     c:'vegetable', v:'safe', s:'栄養豊富で安心',
+    r:['刺激成分なく良質な食材'],
+    t:['茹で・蒸しで毎日でも']},
+  {n:'きゅうり',         c:'vegetable', v:'safe', s:'水分豊富で◎',
+    r:['夏場の水分補給にも'],
+    t:['塩分を控えて']},
+
+  // 発酵食品・チーズ ──────
+  {n:'納豆',             c:'fermented', v:'caution', s:'発酵食品だが穏やか',
+    r:['発酵食品はヒスタミンを含むことがある','納豆は比較的少ない'],
+    t:['1日1パックまで']},
+  {n:'味噌',             c:'fermented', v:'safe', s:'日常使いはOK',
+    r:['調味料として使う量なら影響少ない'],
+    t:['味噌汁は具だくさんで']},
+  {n:'醤油',             c:'fermented', v:'safe', s:'問題なし',
+    r:['少量使用に留まる'],
+    t:['塩分の摂りすぎに注意']},
+  {n:'プロセスチーズ',   c:'fermented', v:'safe', s:'熟成度低く穏やか',
+    r:['熟成が浅くヒスタミン少ない'],
+    t:['日常のチーズはこちらで']},
+  {n:'熟成チーズ',       c:'fermented', v:'warn', s:'ヒスタミンが多い',
+    r:['長期熟成でヒスタミン蓄積','カマンベール・ブルーチーズ等'],
+    t:['症状が強い時期は控える']},
+  {n:'パルメザンチーズ', c:'fermented', v:'warn', s:'長期熟成で多い',
+    r:['硬質熟成チーズはヒスタミン多い'],
+    t:['少量振りかける程度に']},
+  {n:'ヨーグルト',       c:'fermented', v:'caution', s:'乳酸発酵',
+    r:['ヒスタミンは少なめだが個人差あり'],
+    t:['1日100g程度に']},
+  {n:'ぬか漬け',         c:'fermented', v:'caution', s:'発酵食品',
+    r:['発酵によりヒスタミン蓄積の可能性'],
+    t:['少量を箸休めに']},
+
+  // 主食・麺類 ──────
+  {n:'白ご飯',           c:'staple', v:'safe', s:'主食の基本',
+    r:['刺激成分なし','炭水化物としてエネルギー源に'],
+    t:['毎食の主食に']},
+  {n:'玄米',             c:'staple', v:'safe', s:'食物繊維豊富',
+    r:['穏やかな食材','整腸作用も'],
+    t:['白米と混ぜて']},
+  {n:'食パン',           c:'staple', v:'safe', s:'シンプルなら◎',
+    r:['菓子パンでなければ問題少ない'],
+    t:['菓子パンは避ける']},
+  {n:'うどん',           c:'staple', v:'safe', s:'温度に注意',
+    r:['麺自体は穏やか'],
+    t:['熱々を急いで食べない・冷やしうどんも◎']},
+  {n:'そば',             c:'staple', v:'safe', s:'冷たいそば◎',
+    r:['麺自体は穏やか'],
+    t:['ざるそばが理想的']},
+  {n:'ラーメン',         c:'staple', v:'caution', s:'スープと熱に注意',
+    r:['脂質が多いスープも','熱々で発汗刺激'],
+    t:['スープは残す・少し冷ます']},
+  {n:'パスタ',           c:'staple', v:'safe', s:'ソース次第',
+    r:['麺自体は問題なし'],
+    t:['オイル系より和風・トマト控えめが◎']},
+  {n:'もち',             c:'staple', v:'safe', s:'問題なし',
+    r:['刺激成分なし'],
+    t:['きな粉などで']},
+
+  // 豆・豆製品 ──────
+  {n:'豆腐',             c:'soy', v:'safe', s:'最も穏やかな食材のひとつ',
+    r:['刺激成分なく低脂質'],
+    t:['冷奴・湯豆腐どちらも◎']},
+  {n:'冷奴',             c:'soy', v:'safe', s:'夏の定番に最適',
+    r:['熱の刺激なし・たんぱく質豊富'],
+    t:['薬味は刺激の少ないものを']},
+  {n:'湯豆腐',           c:'soy', v:'safe', s:'熱さに注意',
+    r:['豆腐自体は問題なし'],
+    t:['少し冷ましてから']},
+  {n:'おから',           c:'soy', v:'safe', s:'食物繊維豊富',
+    r:['穏やかな食材'],
+    t:['副菜として活用']},
+  {n:'豆乳',             c:'soy', v:'safe', s:'代替乳として',
+    r:['刺激成分なし'],
+    t:['牛乳代わりにも']},
+  {n:'枝豆',             c:'soy', v:'safe', s:'おつまみに最適',
+    r:['穏やかな食材'],
+    t:['ビールの代わりに枝豆+お茶を']},
+
+  // 飲み物 ──────
+  {n:'水',               c:'drink', v:'safe', s:'最も安心',
+    r:['刺激なし','こまめな水分補給に'],
+    t:['常温〜冷たい温度で']},
+  {n:'スポーツドリンク', c:'drink', v:'safe', s:'運動時の補給に',
+    r:['電解質補給に有用'],
+    t:['糖分の摂りすぎに注意']},
+  {n:'牛乳',             c:'drink', v:'caution', s:'個人差あり',
+    r:['乳製品でわずかにヒスタミン関与'],
+    t:['1日コップ1杯まで']},
+  {n:'熱いお茶',         c:'drink', v:'caution', s:'温度が問題',
+    r:['熱で体温が上昇し発汗を誘発'],
+    t:['少し冷ましてから']},
+  {n:'冷たい麦茶',       c:'drink', v:'safe', s:'夏の定番に最適',
+    r:['ノンカフェイン・冷却効果も'],
+    t:['作り置きで日常使いに']},
+  {n:'炭酸水',           c:'drink', v:'safe', s:'刺激は一時的',
+    r:['カフェインなし'],
+    t:['ジュースの代わりに']},
+  {n:'果汁100%ジュース', c:'drink', v:'caution', s:'糖分に注意',
+    r:['糖質摂取量が多くなりやすい'],
+    t:['コップ1杯までに']},
+
+  // 汁物・鍋 ──────
+  {n:'味噌汁',           c:'soup', v:'safe', s:'温度と具で調整',
+    r:['味噌は調味料量なら問題なし'],
+    t:['少し冷ましてから','野菜たっぷりで']},
+  {n:'すまし汁',         c:'soup', v:'safe', s:'穏やかな汁物',
+    r:['刺激成分少ない'],
+    t:['具材で栄養バランスを']},
+  {n:'寄せ鍋',           c:'soup', v:'safe', s:'温度に注意',
+    r:['鍋自体は穏やか'],
+    t:['ふうふう冷ましながら']},
+  {n:'キムチ鍋',         c:'soup', v:'warn', s:'辛味+熱で要注意',
+    r:['激しい発汗刺激の組み合わせ'],
+    t:['症状の強い時期は避ける']},
+  {n:'おでん',           c:'soup', v:'safe', s:'鍋の中では穏やか',
+    r:['辛味なし'],
+    t:['冷ましながら食べる']},
+  {n:'豚骨ラーメンスープ', c:'soup', v:'caution', s:'脂質と熱',
+    r:['脂質が多い','熱で発汗刺激'],
+    t:['スープは飲み干さない']},
+];
+
+/* ============================
+   ロジック
+   ============================ */
+
+// タブ切り替え
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+// 検索
+const foodInput = document.getElementById('foodInput');
+const checkBtn = document.getElementById('checkBtn');
+const resultArea = document.getElementById('resultArea');
+
+document.querySelectorAll('.chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    foodInput.value = btn.dataset.food;
+    doSearch();
+  });
+});
+foodInput.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); doSearch(); }});
+checkBtn.addEventListener('click', doSearch);
+
+function normalize(s){
+  return String(s||'').toLowerCase().trim()
+    .replace(/[ァ-ン]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60)) // カナ→かな
+    .replace(/\s+/g, '');
+}
+
+function doSearch(){
+  const q = foodInput.value.trim();
+  if(!q){ foodInput.focus(); return; }
+  const nq = normalize(q);
+
+  // 完全一致 → 部分一致 → サマリー部分一致
+  let hit = FOODS.find(f => normalize(f.n) === nq);
+  if(!hit) hit = FOODS.find(f => normalize(f.n).includes(nq) || nq.includes(normalize(f.n)));
+  if(!hit) hit = FOODS.find(f => normalize(f.s).includes(nq) || (f.r||[]).some(r => normalize(r).includes(nq)));
+
+  if(hit) renderHit(hit);
+  else renderNotFound(q);
+}
+
+function renderHit(f){
+  const labels = {safe:'食べてOK', caution:'注意して', warn:'控えめに'};
+  resultArea.innerHTML = `
+    <article class="result-card">
+      <header class="verdict ${f.v}">
+        <h2 class="verdict-food">${esc(f.n)}</h2>
+        <div class="verdict-summary">${esc(f.s)}</div>
+        <div class="verdict-tag">${labels[f.v]}</div>
+      </header>
+      <div class="verdict-body">
+        <h3>判定の理由</h3>
+        <ul>${(f.r||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+        <h3>食べ方のヒント</h3>
+        <ul>${(f.t||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      </div>
+    </article>
+  `;
+  setTimeout(() => resultArea.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+}
+
+function renderNotFound(q){
+  resultArea.innerHTML = `
+    <div class="not-found">
+      <h3>「${esc(q)}」はデータに登録されていません</h3>
+      <p style="font-size:13px;color:var(--ink-soft);margin:0;">代わりに、判定の基本ルールをご参考にしてください。</p>
+      <div class="basic-rules">
+        <div class="basic-rule">
+          <div class="rule-dot warn"></div>
+          <div class="rule-text">
+            <strong>控えめに：辛いもの・お酒・熱い飲食物</strong>
+            <small>急な発汗や血管拡張で症状を誘発しやすい</small>
+          </div>
+        </div>
+        <div class="basic-rule">
+          <div class="rule-dot warn"></div>
+          <div class="rule-text">
+            <strong>控えめに：甘いもの・脂っこいもの</strong>
+            <small>皮脂が増えて汗アレルゲンが発生しやすくなる</small>
+          </div>
+        </div>
+        <div class="basic-rule">
+          <div class="rule-dot caution"></div>
+          <div class="rule-text">
+            <strong>注意：青魚・熟成チーズ・サラミなど</strong>
+            <small>かゆみの元(ヒスタミン)が多い食品</small>
+          </div>
+        </div>
+        <div class="basic-rule">
+          <div class="rule-dot caution"></div>
+          <div class="rule-text">
+            <strong>注意:カフェイン(コーヒー・エナジードリンク)</strong>
+            <small>発汗の指令を出しやすくする</small>
+          </div>
+        </div>
+        <div class="basic-rule">
+          <div class="rule-dot safe"></div>
+          <div class="rule-text">
+            <strong>食べてOK：白身魚・鶏ささみ・豆腐・野菜・ご飯</strong>
+            <small>刺激成分が少なく日常的に安心して食べられる</small>
+          </div>
+        </div>
+      </div>
+      <div class="not-found-tip">
+        判断に迷う時は、診察時に「これ食べてもよいか」と気軽にご相談ください。
+      </div>
+    </div>
+  `;
+  setTimeout(() => resultArea.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+}
+
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* カテゴリブラウズ */
+const catList = document.getElementById('catList');
+function renderCategories(){
+  catList.innerHTML = `
+    <div class="category-grid">
+      ${CATEGORIES.map(c => {
+        const count = FOODS.filter(f => f.c === c.id).length;
+        return `<button class="cat-tile" data-cat="${c.id}">
+          <div class="cat-tile-icon">${c.name[0]}</div>
+          <div class="cat-tile-name">${esc(c.name)}</div>
+          <div class="cat-tile-count">${count}件・${esc(c.desc)}</div>
+        </button>`;
+      }).join('')}
+    </div>
+  `;
+  catList.querySelectorAll('.cat-tile').forEach(tile => {
+    tile.addEventListener('click', () => renderCategoryFoods(tile.dataset.cat));
+  });
+}
+
+function renderCategoryFoods(catId){
+  const cat = CATEGORIES.find(c => c.id === catId);
+  const foods = FOODS.filter(f => f.c === catId);
+  const labels = {safe:'食べてOK', caution:'注意して', warn:'控えめに'};
+  catList.innerHTML = `
+    <button class="back-btn" id="backBtn">← 分類一覧へ戻る</button>
+    <div class="section-title">${esc(cat.name)}</div>
+    <div class="food-list">
+      ${foods.map(f => `
+        <button class="food-item ${f.v}" data-food="${esc(f.n)}">
+          <div class="name">${esc(f.n)}</div>
+          <div class="v-mini">${labels[f.v]}</div>
+        </button>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('backBtn').addEventListener('click', renderCategories);
+  catList.querySelectorAll('.food-item').forEach(item => {
+    item.addEventListener('click', () => {
+      // 検索タブに飛ばして表示
+      document.querySelector('[data-panel="search"]').click();
+      foodInput.value = item.dataset.food;
+      doSearch();
+    });
+  });
+}
+renderCategories();
+
+/* OK食品リスト */
+function renderOkList(){
+  const okFoods = FOODS.filter(f => f.v === 'safe');
+  const okList = document.getElementById('okList');
+  okList.innerHTML = okFoods.map(f => `
+    <button class="food-item safe" data-food="${esc(f.n)}">
+      <div class="name">${esc(f.n)}</div>
+      <div class="v-mini">${esc(f.s)}</div>
+    </button>
+  `).join('');
+  okList.querySelectorAll('.food-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelector('[data-panel="search"]').click();
+      foodInput.value = item.dataset.food;
+      doSearch();
+    });
+  });
+}
+renderOkList();
+
+/* 印刷ビュー */
+function renderPrintView(){
+  const groups = {
+    safe: {label:'食 べ て O K', desc:'日常的に安心して食べられる食品'},
+    caution: {label:'注 意 し て', desc:'量・タイミング・組み合わせに気をつけて'},
+    warn: {label:'控 え め に', desc:'症状が出やすい時期はなるべく避ける'},
+  };
+  const view = document.getElementById('printView');
+  view.innerHTML = `
+    <div class="print-header">
+      <h1>汗かゆ食品ガイド</h1>
+      <p>コリン性蕁麻疹・汗アレルギーの方へ</p>
+    </div>
+    ${['safe','caution','warn'].map(v => {
+      const foods = FOODS.filter(f => f.v === v).map(f => f.n);
+      return `
+        <div class="print-section">
+          <h2 class="${v}">${groups[v].label}　${groups[v].desc}</h2>
+          <div class="print-foods">
+            ${foods.map(n => `<div>・${esc(n)}</div>`).join('')}
+          </div>
+        </div>
+      `;
+    }).join('')}
+    <div class="print-clinic">やまもと皮膚科・漢方クリニック</div>
+  `;
+}
+renderPrintView();
+</script>
+</body>
+</html>
